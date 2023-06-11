@@ -1,0 +1,4 @@
+php artisan make:controller user
+php artisan make:resource UserResource
+php artisan make:migration create_roles_table --create=roles
+php artisan make:model Role -c
