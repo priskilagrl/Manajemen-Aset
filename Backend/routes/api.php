@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\AssetController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
@@ -29,11 +30,16 @@ Route::prefix('auth')->group(
     }
 );
 
-Route::middleware('role:admin')->group(function () {
-    // Rute-rute yang hanya dapat diakses oleh admin
-    Route::get('/admin/dashboard', [AdminController::class, 'dashboard']);
-    // ...
-});
+
+Route::prefix('asset')->middleware('auth:api')->group(
+    function () {
+    Route::get('/', [AssetController::class, 'index']);
+    Route::get('show/{asset}', [AssetController::class, 'show']);
+    Route::post('store', [AssetController::class, 'store']);
+    Route::post('update/{asset}', [AssetController::class, 'update']);
+    Route::get('delete/{asset}', [AssetController::class, 'destroy']);
+    }
+);
 
 Route::middleware('role:user')->group(function () {
     // Rute-rute yang hanya dapat diakses oleh pengguna dengan peran "user"
