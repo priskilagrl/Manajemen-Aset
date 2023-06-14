@@ -34,6 +34,31 @@ class AuthController extends Controller
             ]
         ], 200);
     }
+    public function register(Request $request)
+    {
+        $credentials = [
+            'email' => $request->get('email'),
+            'password' => $request->get('password'),
+        ];
+        // return $credentials;
+        $token = Auth::attempt($credentials, true);
+        if (!$token) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Unauthorized',
+            ], 401);
+        }
+
+        $user = Auth::user();
+        return response()->json([
+            'status' => 'success',
+            'user' => $user,
+            'authorisation' => [
+                'token' => $token,
+                'type' => 'bearer',
+            ]
+        ], 200);
+    }
     public function logout()
     {
         Auth::logout();

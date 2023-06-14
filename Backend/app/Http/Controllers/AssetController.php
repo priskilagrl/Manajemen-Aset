@@ -78,7 +78,29 @@ class AssetController extends Controller
      */
     public function update(UpdateAssetRequest $request, Asset $asset)
     {
-        //
+        $input = $request->validated();
+        $asset->name = $input['name'];
+        $asset->description = $input['deskripsi'];
+
+        if (!is_null($input['image'])) {
+            if (Storage::exists($asset->image)) {
+                Storage::delete($asset->image);
+            }
+            $image = Storage::put('public/images/Asset', $request->file('image'));
+            $asset->image = $image;
+        }
+        $asset->update();
+        $category = Kategori::find($asset->kategori);
+        $asset->kategori()->detach($category);
+        $category = Kategori::find($input['kategori']);
+        $asset->kategori()->attach($category);
+
+        $status = Status::find($asset->statusAset);
+        $asset->statusAset()->detach($status);
+        $status = Status::find($input['status']);
+        $asset->statusAset()->attach($status);
+
+        return response()->json(['status' => 'Asset Berhasil Diperbarui !'], 201);
     }
 
     /**
@@ -89,6 +111,22 @@ class AssetController extends Controller
      */
     public function destroy(Asset $asset)
     {
-        //
+        try {
+            if (Storage::exists($asset->image)) {
+                Storage::delete($asset->image);
+            }
+            $status = Status::find($asset->statusAset);
+            $asset->statusAset()->detach($status);
+            $category = Kategori::find($asset->kategori);
+            $asset->kategori()->detach($category);
+            $asset->delete();
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Failed to delete resource',
+            ], 500);
+        }
+        return response()->json([
+            'status' => 'Data Asset Berhasil Dihapus !',
+        ], 200);
     }
 }
