@@ -7,7 +7,6 @@ use App\Models\User;
 use Faker\Core\Uuid;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Str;
 
 class UserSeeder extends Seeder
 {
@@ -23,7 +22,6 @@ class UserSeeder extends Seeder
             'uuid' => fake()->uuid(),
             'email' => 'admin@example.com',
             'password' => bcrypt('adminpassword'),
-            'remember_token' => Str::random(60),
         ]);
 
         // Assign the "admin" role to the admin user
@@ -35,7 +33,6 @@ class UserSeeder extends Seeder
             'uuid' => fake()->uuid(),
             'email' => 'user@example.com',
             'password' => bcrypt('userpassword'),
-            'remember_token' => Str::random(60),
         ]);
 
         // Assign the "user" role to the regular user
