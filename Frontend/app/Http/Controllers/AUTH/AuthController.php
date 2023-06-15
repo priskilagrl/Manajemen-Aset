@@ -9,10 +9,15 @@ use Illuminate\Support\Facades\Http;
 
 class AuthController extends Controller
 {
-     public function showLoginForm()
+    public function showLoginForm()
     {
         return view('auth.login');
     }
+    public function showRegisterForm()
+    {
+        return view('auth.register');
+    }
+
     protected $redirectTo = RouteServiceProvider::HOME;
     
     public function login(Request $request)
@@ -47,5 +52,27 @@ class AuthController extends Controller
 
         // Request failed, handle the error
         return response()->json(['error' => 'Login failed'], $response->status());
+    }
+
+    public function register(Request $request)
+    {
+        $baseUrl = 'http://127.0.0.1:8000'; // Replace with your API base URL
+
+        // Prepare the login request data
+        $data = [
+            'email' => $request->email,
+            'password' => $request->password,
+            'name' => $request->name,
+        ];
+
+        // Send the login request to the API endpoint
+        $response = Http::post($baseUrl . '/api/auth/register', $data);
+        dd($response);
+        // Check if the request was successful
+        if ($response->created()) {
+            // Retrieve the response data
+            // $responseData = $response->json();
+            return redirect('/login');
+        }
     }
 }
